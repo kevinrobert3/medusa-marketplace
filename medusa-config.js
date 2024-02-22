@@ -43,12 +43,26 @@ const plugins = [
     },
   },
   {
-    resolve: `medusa-custom-attributes`,
+    resolve: `medusa-plugin-algolia`,
     options: {
-      enableUI: true,
-      projectConfig: {
-        store_cors: STORE_CORS,
-        admin_cors: ADMIN_CORS,
+      applicationId: process.env.ALGOLIA_APP_ID,
+      adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY,
+      settings: {
+        products: {
+          indexSettings: {
+            searchableAttributes: ["title"],
+            attributesToRetrieve: [
+              "id",
+              "title",
+              "description",
+              "handle",
+              "thumbnail",
+              "images",
+            ],
+            filterableAttributes: ["tags", "category", "type", "title"],
+          },
+          primaryKey: "id",
+        },
       },
     },
   },

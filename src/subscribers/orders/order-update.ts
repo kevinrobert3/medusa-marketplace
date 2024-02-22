@@ -14,8 +14,6 @@ export default async function orderUpdateHandler({
 
     const {id} = data
 
-
-
     const order: Order = (await orderService.retrieve(id, {
         relations: [
             "items",
