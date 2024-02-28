@@ -8,6 +8,7 @@ export function registerLoggedInUser(): RequestHandler {
     res: Response,
     next: NextFunction
   ): Promise<void> => {
+    console.log("am i running 2");
     let loggedInUser: User | null = null;
 
     const userId = req.user && (req.user.id || req.user.userId);
@@ -24,11 +25,12 @@ export function registerLoggedInUser(): RequestHandler {
           select: ["id", "store_id", "role", "teamRole"],
         });
       } catch (e) {
+        console.log("Error: " + e);
         next(e);
       }
     }
-    console.log("registering logged in user in request scope")
-    console.log("req url", req.method, req.originalUrl)
+    console.log("registering logged in user in request scope");
+    console.log("req url", req.method, req.originalUrl);
     req.scope.register({
       loggedInUser: {
         resolve: () => loggedInUser,

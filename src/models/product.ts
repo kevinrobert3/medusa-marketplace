@@ -5,11 +5,11 @@ import { Store } from "./store";
 
 @Entity()
 export class Product extends MedusaProduct {
-  @Index()
+  @Index("ProductStoreId")
   @Column({ nullable: false })
   store_id: string;
 
-  @ManyToOne(() => Store, (store) => store.members)
+  @ManyToOne(() => Store, (store) => store.products)
   @JoinColumn({ name: "store_id", referencedColumnName: "id" })
   store: Store;
 }

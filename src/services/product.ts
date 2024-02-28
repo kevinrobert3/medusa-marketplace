@@ -41,33 +41,50 @@ class ProductService extends MedusaProductService {
     }
   }
 
+  // async list(
+  //   selector: ProductSelector,
+  //   config?: FindProductConfig
+  // ): Promise<Product[]> {
+  //   if (this.loggedInUser_?.role === "admin") {
+  //     return super.list(selector, config);
+  //   }
+
+  //   // Store scoping
+  //   if (this.requestStoreId_) {
+  //     selector.store_id = this.requestStoreId_;
+  //   }
+  //   // Admin scoping
+  //   else if (!selector.store_id && this.loggedInUser_?.store_id) {
+  //     selector.store_id = this.loggedInUser_.store_id;
+  //   }
+
+  //   return await super.list(selector, config);
+  // }
   async list(
     selector: ProductSelector,
     config?: FindProductConfig
   ): Promise<Product[]> {
-    if (this.loggedInUser_?.role === "admin") {
-      return super.list(selector, config);
-    }
-
-    // Store scoping
-    if (this.requestStoreId_) {
-      selector.store_id = this.requestStoreId_;
-    }
-    // Admin scoping
-    else if (!selector.store_id && this.loggedInUser_?.store_id) {
+    console.log("listing");
+    // console.log(selector.)
+    if (!selector.store_id && this.loggedInUser_?.store_id) {
       selector.store_id = this.loggedInUser_.store_id;
     }
+
+    config.select?.push("store_id");
+
+    config.relations?.push("store");
+    console.log("listing 2");
 
     return await super.list(selector, config);
   }
 
   async listAndCount(
     selector: ProductSelector,
-    config?: FindProductConfig,
+    config?: FindProductConfig
   ): Promise<[Product[], number]> {
-    if (this.loggedInUser_?.role === "admin") {
-      return super.listAndCount(selector, config);
-    }
+    // if (this.loggedInUser_?.role === "admin") {
+    //   return super.listAndCount(selector, config);
+    // }
 
     // Store scoping
     if (this.requestStoreId_) {
@@ -78,10 +95,41 @@ class ProductService extends MedusaProductService {
       selector.store_id = this.loggedInUser_.store_id;
     }
 
+    // console.log(selector.store_id);
+    config.select?.push("store_id");
+
+    config.relations?.push("store");
+
     return await super.listAndCount(selector, config);
   }
 
+  async retrieve(
+    productId: string,
+    config?: FindProductConfig
+  ): Promise<Product> {
+    console.log("retrieving");
+    config.relations = [...(config.relations || []), "store"];
+
+    const product = await super.retrieve(productId, config);
+
+    console.log(product.handle);
+
+    if (
+      product.store?.id &&
+      this.loggedInUser_?.store_id &&
+      product.store.id !== this.loggedInUser_.store_id
+    ) {
+      // Throw error if you don't want a product to be accessible to other stores
+      throw new Error("Product does not exist in store.");
+    }
+
+    return product;
+  }
+
   async create(productObject: CreateProductInput): Promise<Product> {
+    // console.log(productObject.status);
+    // console.log("ID: " + this.loggedInUser_?.store_id);
+    // console.log("HANDLE: " + productObject?.handle);
     if (!productObject.store_id && this.loggedInUser_?.store_id) {
       productObject.store_id = this.loggedInUser_.store_id;
     }

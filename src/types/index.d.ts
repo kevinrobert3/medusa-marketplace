@@ -2,7 +2,8 @@ import { Role } from "models/role";
 
 export declare module "@medusajs/medusa/dist/models/user" {
   declare interface User {
-    store_id: string;
+    store_id?: string;
+    store_handle?: string;
     role_id: string;
     store?: Store;
     teamRole?: Role;
@@ -18,12 +19,14 @@ export declare module "@medusajs/medusa/dist/models/product" {
 
 export declare module "@medusajs/medusa/dist/models/store" {
   declare interface Store {
+    members?: User[];
+    products?: Product[];
     c_stripe_account_id: string;
     c_stripe_account_enabled: boolean;
   }
 }
 
- export declare module "@medusajs/medusa/dist/models/invite" {
+export declare module "@medusajs/medusa/dist/models/invite" {
   declare interface Invite {
     store_id: string;
     store?: Store;

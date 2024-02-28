@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 
 let ENV_FILE_NAME = "";
-switch (process.env.NODE_ENV) {
+switch (process.env.NODE_ENV ? process.env.NODE_ENV : process.env.VERCEL_ENV) {
   case "production":
     ENV_FILE_NAME = ".env.production";
     break;
@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
     break;
   case "development":
   default:
-    ENV_FILE_NAME = ".env";
+    ENV_FILE_NAME = ".env.local";
     break;
 }
 
@@ -22,14 +22,12 @@ try {
 } catch (e) {}
 
 // CORS when consuming Medusa from admin
-const ADMIN_CORS =
-  process.env.ADMIN_CORS || "http://localhost:7000,http://localhost:7001";
+const ADMIN_CORS = `${process.env.MEDUSA_ADMIN_BACKEND_URL},http://localhost:7000,http://localhost:7001,https://seller.tru.africa,http://localhost:9000`;
 
 // CORS to avoid issues when consuming Medusa from a client
-const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
+const STORE_CORS = "http://localhost:8000,http://localhost:3000";
 
-const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default";
+const DATABASE_URL = `postgres://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:5432/${process.env.PG_DATABASE}`;
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
@@ -42,30 +40,30 @@ const plugins = [
       upload_dir: "uploads",
     },
   },
-  {
-    resolve: `medusa-plugin-algolia`,
-    options: {
-      applicationId: process.env.ALGOLIA_APP_ID,
-      adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY,
-      settings: {
-        products: {
-          indexSettings: {
-            searchableAttributes: ["title"],
-            attributesToRetrieve: [
-              "id",
-              "title",
-              "description",
-              "handle",
-              "thumbnail",
-              "images",
-            ],
-            filterableAttributes: ["tags", "category", "type", "title"],
-          },
-          primaryKey: "id",
-        },
-      },
-    },
-  },
+  // {
+  //   resolve: `medusa-plugin-algolia`,
+  //   options: {
+  //     applicationId: process.env.ALGOLIA_APP_ID,
+  //     adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY,
+  //     settings: {
+  //       products: {
+  //         indexSettings: {
+  //           searchableAttributes: ["title"],
+  //           attributesToRetrieve: [
+  //             "id",
+  //             "title",
+  //             "description",
+  //             "handle",
+  //             "thumbnail",
+  //             "images",
+  //           ],
+  //           filterableAttributes: ["tags", "category", "type", "title"],
+  //         },
+  //         primaryKey: "id",
+  //       },
+  //     },
+  //   },
+  // },
   {
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
@@ -102,12 +100,12 @@ const projectConfig = {
   admin_cors: ADMIN_CORS,
   // Uncomment the following lines to enable REDIS
   // redis_url: REDIS_URL
-  stripe: {
-    api_key: process.env.STRIPE_API_KEY,
-    webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
-    app_url: process.env.APP_URL || "http://localhost:9000",
-    capture: true,
-  },
+  // stripe: {
+  //   api_key: process.env.STRIPE_API_KEY,
+  //   webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
+  //   app_url: process.env.APP_URL || "http://localhost:9000",
+  //   capture: true,
+  // },
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */

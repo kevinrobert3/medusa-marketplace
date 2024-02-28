@@ -9,12 +9,16 @@ import { Store } from "./store";
 
 @Entity()
 export class User extends MedusaUser {
-  @Index()
+  @Index("UserStoreId")
   @Column({ nullable: true })
   store_id: string | null;
 
+  @Index("UserStoreHandle")
+  @Column({ nullable: true })
+  store_handle: string | null;
+
   @ManyToOne(() => Store, (store) => store.members)
-  @JoinColumn({ name: "store_id" })
+  @JoinColumn({ name: "store_id", referencedColumnName: "id" })
   store: Store;
 
   @Index()

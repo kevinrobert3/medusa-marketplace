@@ -1,11 +1,16 @@
 import { Lifetime } from "awilix";
-import { User, UserService as MedusaUserService, SalesChannelService } from "@medusajs/medusa";
+import {
+  User,
+  UserService as MedusaUserService,
+  SalesChannelService,
+} from "@medusajs/medusa";
 import {
   FilterableUserProps,
   CreateUserInput as MedusaCreateUserInput,
 } from "@medusajs/medusa/dist/types/user";
 import StoreRepository from "../repositories/store";
 import * as crypto from "crypto";
+import slugify from "slugify";
 
 type CreateUserInput = {
   store_id?: string;
@@ -47,6 +52,10 @@ class UserService extends MedusaUserService {
       //   default_sales_channel_id: salesChannel.id,
       // };
       let newStore = storeRepo.create();
+      // newStore.store_handle = slugify(newStore.name, {
+      //   lower: true,
+      //   strict: true,
+      // });
       newStore = await storeRepo.save(newStore);
       user.store_id = newStore.id;
     }

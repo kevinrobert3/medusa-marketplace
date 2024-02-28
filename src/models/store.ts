@@ -11,11 +11,11 @@ import { User } from "./user";
 export class Store extends MedusaStore {
   @OneToMany(() => User, (user) => user.store)
   @JoinColumn({ name: "id", referencedColumnName: "store_id" })
-  members: User[];
+  members?: User[];
 
   @OneToMany(() => Product, (product) => product.store)
   @JoinColumn({ name: "id", referencedColumnName: "store_id" })
-  products: Product[];
+  products?: Product[];
 
   @OneToMany(() => Order, (order) => order.store)
   @JoinColumn({ name: "id", referencedColumnName: "store_id" })
@@ -28,10 +28,13 @@ export class Store extends MedusaStore {
   @OneToMany(() => Role, (role) => role.store)
   @JoinColumn({ name: "id", referencedColumnName: "store_id" })
   roles: Role[];
-  
+
   @Column({ nullable: true })
   c_stripe_account_id: string;
 
   @Column({ nullable: true, default: false })
   c_stripe_account_enabled: boolean;
+
+  @Column({ nullable: true })
+  store_handle: string;
 }
